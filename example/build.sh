@@ -76,6 +76,8 @@ docker build "${params[@]}"
 
 if [ -z "$REMOTE_REPO" ]; then
     echo "After local build, at this point we need to know the remote to push to. Use --remote-repo REMOTE_REPO"
+    echo "To push to docker hub, use 'docker.io' as remote"
+
     exit 1
 fi
 
