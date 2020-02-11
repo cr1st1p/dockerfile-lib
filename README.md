@@ -79,7 +79,7 @@ One way would be to use ```git submodule``` (https://git-scm.com/book/en/v2/Git-
 ```bash
 cd myproject
 git init # in you case you haven't done this already
-git submodule add https://THIS_REPO dockerfile-lib
+git submodule add https://github.com/cr1st1p/dockerfile-lib.git dockerfile-lib
 # you should see code being downloaded
 # bring 2 files from the example directory:
 cp dockerfile-lib/example/{build.sh,dockerfile-gen.sh} .
