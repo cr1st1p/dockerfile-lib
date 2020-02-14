@@ -33,7 +33,7 @@ assert_os_detected() {
     fi
 }
 
-assert_os_code_name_dected() {
+assert_os_code_name_detected() {
     [ -n "$os_code_name" ] || bail "Could not 'detect' the OS code name"
 }
 
@@ -52,6 +52,10 @@ is_ubuntu() {
     [ "$os_id" = "ubuntu" ]
 }
 
+is_alpine() {
+    assert_os_detected
+    [ "$os_id" = "alpine" ]
+}
 
 GEN_FROM() {
     DOCKERFILE_FROM="$1"

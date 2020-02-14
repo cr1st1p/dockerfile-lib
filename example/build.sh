@@ -13,11 +13,15 @@ REMOTE_REPO=
 DOCKER_NO_CACHE=
 
 
+bail() {
+    echo "$*"
+    exit 1
+}
+
 # command line parsing:
 checkArg () {
     if [ -z "$2" ] || [[ "$2" == "-"* ]]; then
-        echo "Expected argument for option: $1. None received"
-        exit 1
+        bail "Expected argument for option: $1. None received"
     fi
 }
 
@@ -49,8 +53,7 @@ do
             break
             ;;
         -*) # unsupported flags
-            echo "Error: Unsupported flag $1" >&2
-            exit 1
+            bail "Error: Unsupported flag $1" >&2
             ;;
         *) # preserve positional arguments
             arguments+=("$1")
@@ -62,7 +65,9 @@ done
 params=()
 [ -n "$DEV_MODE" ] && params+=("--dev")
 [ -n "$FORCE_GIT_CLONE" ] && params+=("--force-git-clone")
-./dockerfile-gen.sh "${params[@]}"  > Dockerfile
+if ! ./dockerfile-gen.sh "${params[@]}"  > Dockerfile ; then
+    bail "Failed to generate the file Dockerfile. Run manually dockerfile-gen.sh"
+fi
 
 
 params=(-t "$REPO_DIR/$NAME:$TAG")
