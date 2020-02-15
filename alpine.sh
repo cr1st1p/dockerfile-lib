@@ -21,3 +21,7 @@ cmd_apk_min_install()  {
     cmd_apk_min_install_impl "$@"
     echo ' \'
 }
+
+run_apk_cleanups() {
+    true
+}
