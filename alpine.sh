@@ -25,3 +25,8 @@ cmd_apk_min_install()  {
 run_apk_cleanups() {
     true
 }
+
+cmd_apk_purge_packages() {
+    enter_run_cmd
+    echo "   ; apk del $* \\ "
+}
