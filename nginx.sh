@@ -6,7 +6,7 @@
 run_nginx_add_repo_debian_like() {
 
 	assert_os_detected
-	assert_os_code_name_dected
+	assert_os_code_name_detected
 
     enter_run_cmd
 

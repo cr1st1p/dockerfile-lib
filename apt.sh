@@ -94,7 +94,7 @@ run_apt_add_repo() {
     local repo_type="${5:-deb}"
 
     if [ -z "$suite" ]; then
-        assert_os_code_name_dected
+        assert_os_code_name_detected
         suite="$os_code_name"
     fi
 

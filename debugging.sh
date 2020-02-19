@@ -1,11 +1,18 @@
 #shellcheck shell=bash
 
 run_debugging_tool_install() {
+    assert_os_detected
+
     enter_run_cmd
-    cat << 'EOS'
+    if is_debian_like; then
+        cat << 'EOS'
     ; echo "Installing debugging tools" \
-    ; export DEBIAN_FRONTEND=noninteractive \
-    ; apt-get install --no-install-recommends --no-install-suggests -yqq strace curl wget netcat nano \
 EOS
+        cmd_apt_min_install strace curl wget netcat nano
+    elif is_alpine; then
+        cmd_apk_min_install strace curl wget netcat-openbsd nano
+    else
+        bail "debugging tools: unhandled OS"
+    fi
 }
 

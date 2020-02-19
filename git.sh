@@ -5,7 +5,7 @@ run_git_clone() {
     local dest="$2"
 
     enter_run_cmd
-    echo "    ; git clone ${url} ${dest} \\"
+    echo "    ; git clone ${url} ${dest} $*\\"
 }
 
 

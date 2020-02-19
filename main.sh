@@ -29,6 +29,23 @@ terminate_run_cmd() {
     fi
 }
 
+
+declare_shell() {
+    if [ -z "$SHELL_COMMAND_GENERATED" ]; then
+        exit_run_cmd
+        echo "SHELL [ $* ]"
+        SHELL_COMMAND_GENERATED=1
+    fi
+}
+
+declare_shell_bash() {
+    declare_shell '"/bin/bash"' ',' '"-c"' 
+}
+
+declare_shell_sh() {
+    declare_shell '"/bin/sh", "-c"'
+}
+
 # to be called just before generating RUN commands.
 # it MUST do at least a 'set -e'
 #
@@ -39,10 +56,8 @@ enter_run_cmd() {
         # we want to use bash and not sh.
         # if you really want 'sh', then, in your main program, set SHELL_COMMAND_GENERATED=1
         # but be aware that some code might want Bash
-        if [ -z "$SHELL_COMMAND_GENERATED" ]; then
-            echo 'SHELL ["/bin/bash", "-c"] '
-            SHELL_COMMAND_GENERATED=1
-        fi
+        # or use declare_shell_sh or .. similar
+        declare_shell_bash
 
         if [ -n "$RUN_WITH_DEBUG" ]; then
             echo 'RUN set -ex \'
@@ -74,3 +89,9 @@ bail() {
 }
 
 
+# should be called first.
+# needed to allow passing secrets to build process, with buildkit
+declare_docker_syntax() {
+    exit_run_cmd
+    echo '# syntax=docker/dockerfile:1.0.0-experimental'
+}
