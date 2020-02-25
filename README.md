@@ -14,10 +14,10 @@ Writing complex Dockerfile has 2 divergent directions regarding image size and c
 
 - if you want a smaller image then you try to have fewer layers (and include cleanup commands in the same 'RUN' command)
 
-- but during development, you don't care about the size but you care about how fast the image gets build after changing a tiny bit of piece of code, so that you can test it. 
+- but during development, you don't care about the size but you care about how fast the image gets build after changing a tiny bit of piece of code, so that you can test it.
 
 
-I would like the same code base to be able to easily handle those 2 cases. 
+I would like the same code base to be able to easily handle those 2 cases.
 
 Using docker multi-stage builds, in order to build smaller final images is not feasible always. It would work if you would have only a few files/directories to move out from the builder image into the final image. And you're still going to have the issue with code duplication.
 
@@ -66,7 +66,7 @@ Those enter/exit run_cmd calls will do the appropriate splitting of RUN commands
 
 Try to use ```GEN_FROM``` function call to generate the 'FROM' Dockerfile command.  It's role is to try to detect what distro you might be running inside the image, so that other scripts can take appropriate measure. Example 'nginx.sh`
 
-Of course, you can choose to do that detection at runtime in your scripts if you want or skip it entirely. Although, personally, I prefer to always call ```run_nginx_install``` and not ```run_nginx_debian_install``` or ```run_nginx_alpine_install``` 
+Of course, you can choose to do that detection at runtime in your scripts if you want or skip it entirely. Although, personally, I prefer to always call ```run_nginx_install``` and not ```run_nginx_debian_install``` or ```run_nginx_alpine_install```
 
 
 
@@ -118,14 +118,14 @@ That means, you **must**:
 - end all commands with a backslash (```\```) and NO space after it
 - NO empty lines
 
-I would use shell here-documents usually. Most of the time with the quoted separator format (a), and only when you need to use function's passed variables, the no-quote separator format (b). 
+I would use shell here-documents usually. Most of the time with the quoted separator format (a), and only when you need to use function's passed variables, the no-quote separator format (b).
 
 Try to minimize use of variant (b) because you must pay attention when using the dollar sign (```$```) and other quoting issues. See examples below.
 
 (a) :
 
 ```shell
-run_supervisor_setup() {    
+run_supervisor_setup() {
     enter_run_cmd
     # we precreate the configuration file in here and change
     # ownership so that during start.sh we can put the appropriate
@@ -168,4 +168,3 @@ EOS
 I there is a slight chance that you might reuse some of your functions in a future project, I would recommend you create a separate directory with those shell functions in it.
 
 In this way, later, you could get your project as well as a git submodule dependency, and re-use those functions.
-
