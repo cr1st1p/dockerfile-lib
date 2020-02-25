@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
-
 # run_* functions are to be run with Dockerfile 'RUN'. For the moment, just a nomenclature, not
 # a requirement
 set -e
 
-SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LIB_PATH="${SCRIPT_PATH}/.."
 
 for n in main.sh apt.sh nginx.sh debugging.sh; do
@@ -13,11 +12,8 @@ for n in main.sh apt.sh nginx.sh debugging.sh; do
     source "${LIB_PATH}/$n"
 done
 
-
 DEV_MODE=
 FORCE_GIT_CLONE=
-
-
 
 # =========
 run_cleanup() {
@@ -27,13 +23,11 @@ run_cleanup() {
     run_apt_cleanups
 }
 
-
-
 # =======
 copy_files() {
     exit_run_cmd
 
-    cat << 'EOS'
+    cat <<'EOS'
 COPY files/www/ /var/www/html/
 
 EOS
@@ -44,7 +38,7 @@ run_nginx_change_port() {
     # since we're running nginx as 'nginx', we need to change port
     # in real use you'd probably write the whole config file from 0...
 
-    cat << 'EOS'
+    cat <<'EOS'
     ; sed -i -E -e 's@listen +80@listen 8080@' /etc/nginx/conf.d/default.conf \
     ; sed -i -E -e 's@root +/usr/share/nginx/html *;@root /var/www/html;@' /etc/nginx/conf.d/default.conf \
 EOS
@@ -56,7 +50,7 @@ run_fix_files() {
     # below, some example of what you could/should do:
     enter_run_cmd
 
-    cat << 'EOS'
+    cat <<'EOS'
     ; chmod +x /start.sh \
 EOS
 }
@@ -77,20 +71,18 @@ EOS
 
 }
 
-
 end_stuff() {
     exit_run_cmd
 
     cat <<'EOS'
-USER nginx    
+USER nginx
 CMD ["nginx", "-g", "daemon off;"]
 #CMD [ "bash", "-c", "sleep 1h"]
 EOS
 }
 
-
 # ==== command line parsing
-checkArg () {
+checkArg() {
     if [ -z "$2" ] || [[ "$2" == "-"* ]]; then
         echo "Expected argument for option: $1. None received"
         exit 1
@@ -98,8 +90,7 @@ checkArg () {
 }
 
 arguments=()
-while [[ $# -gt 0 ]]
-do
+while [[ $# -gt 0 ]]; do
     # split --x=y to have them separated
     [[ $1 == --*=* ]] && set -- "${1%%=*}" "${1#*=}" "${@:2}"
 
@@ -109,6 +100,13 @@ do
             shift
             ;;
         --force-git-clone)
+            # if you need, during development, to force a git clone to happen
+            # and not use a docker cached layer, set this,
+            # and, before your git clone command add:
+            #     if [ -n "$FORCE_GIT_CLONE" ]; then
+            #       run_current_timestamp
+            #     fi
+            #shellcheck disable=SC2034
             FORCE_GIT_CLONE=1
             shift
             ;;
@@ -124,7 +122,7 @@ do
             arguments+=("$1")
             shift
             ;;
-    esac    
+    esac
 done
 
 # ==== and now, generate output:
@@ -132,7 +130,6 @@ done
 start_stuff
 
 [ -z "$DEV_MODE" ] && copy_files
-
 
 run_apt_initial_minimal_installs
 
@@ -147,7 +144,6 @@ run_debugging_tool_install
 
 run_nginx_as_nginx_user
 run_nginx_change_port
-
 
 [ -n "$DEV_MODE" ] && copy_files
 

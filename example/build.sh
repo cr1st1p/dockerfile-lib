@@ -9,9 +9,8 @@ export DOCKER_BUILDKIT=1
 
 DEV_MODE=
 FORCE_GIT_CLONE=
-REMOTE_REPO= 
+REMOTE_REPO=
 DOCKER_NO_CACHE=
-
 
 bail() {
     echo "$*"
@@ -19,15 +18,14 @@ bail() {
 }
 
 # command line parsing:
-checkArg () {
+checkArg() {
     if [ -z "$2" ] || [[ "$2" == "-"* ]]; then
         bail "Expected argument for option: $1. None received"
     fi
 }
 
 arguments=()
-while [[ $# -gt 0 ]]
-do
+while [[ $# -gt 0 ]]; do
     # split --x=y to have them separated
     [[ $1 == --*=* ]] && set -- "${1%%=*}" "${1#*=}" "${@:2}"
 
@@ -43,7 +41,7 @@ do
         --remote-repo)
             checkArg "$1" "$2"
             REMOTE_REPO="$2"
-            shift 2;
+            shift 2
             ;;
         --no-cache)
             DOCKER_NO_CACHE=1
@@ -59,23 +57,20 @@ do
             arguments+=("$1")
             shift
             ;;
-    esac    
+    esac
 done
 
 params=()
 [ -n "$DEV_MODE" ] && params+=("--dev")
 [ -n "$FORCE_GIT_CLONE" ] && params+=("--force-git-clone")
-if ! ./dockerfile-gen.sh "${params[@]}"  > Dockerfile ; then
+if ! ./dockerfile-gen.sh "${params[@]}" >Dockerfile; then
     bail "Failed to generate the file Dockerfile. Run manually dockerfile-gen.sh"
 fi
-
 
 params=(-t "$REPO_DIR/$NAME:$TAG")
 [ -n "$DOCKER_NO_CACHE" ] && params+=("--no-cache")
 [ -n "$DOCKER_BUILDKIT" ] && params+=(--progress plain)
 params+=(".")
-
-
 
 docker build "${params[@]}"
 
@@ -86,6 +81,5 @@ if [ -z "$REMOTE_REPO" ]; then
     exit 1
 fi
 
-docker tag "$REPO_DIR/$NAME:$TAG" "$REMOTE_REPO/$REPO_DIR/$NAME:$TAG" 
-docker push "$REMOTE_REPO/$REPO_DIR/$NAME:$TAG" 
-
+docker tag "$REPO_DIR/$NAME:$TAG" "$REMOTE_REPO/$REPO_DIR/$NAME:$TAG"
+docker push "$REMOTE_REPO/$REPO_DIR/$NAME:$TAG"

@@ -8,14 +8,11 @@ run_git_clone() {
     echo "    ; git clone ${url} ${dest} $*\\"
 }
 
-
-
 run_git_clone_into_existing_dir() {
     local url="$1"
     local dest="$2"
     shift 2
     # rest of parameters are given to git checkout
-
 
     enter_run_cmd
 
