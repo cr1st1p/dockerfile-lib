@@ -13,4 +13,3 @@ cmd_kubectl_install() {
     echo "    ; curl -f --silent -L 'https://storage.googleapis.com/kubernetes-release/release/v$version/bin/linux/amd64/kubectl' -o '$binary' \\"
     echo "    ; chmod +x $binary \\"
 }
-
