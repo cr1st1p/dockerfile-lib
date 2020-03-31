@@ -55,7 +55,6 @@ run_apt_remove_initial_packages() {
 }
 
 run_apt_cleanups() {
-    enter_run_cmd
     cmd_apt_purge_packages command-not-found command-not-found-data man-db manpages python3-commandnotfound python3-update-manager update-manager-core
     # bash parsers are having a problem with ending \
     head -n -1 <<'EOS'
