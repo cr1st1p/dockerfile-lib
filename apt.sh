@@ -16,14 +16,14 @@ run_apt_update() {
 EOS
 }
 
-cmd_apt_min_install_impl()  {
+cmd_apt_min_install_impl() {
     #shellcheck disable=SC1003
     echo 'DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests -yqq -o Dpkg::Options::=--force-unsafe-io \'
     echo -n "${INDENT}${INDENT}$*"
 }
 
 # Give it as parameters what packages to install. IT will install them, but without any other optional dependencies
-cmd_apt_min_install()  {
+cmd_apt_min_install() {
     enter_run_cmd
 
     echo -n "$INDENT; "
@@ -32,14 +32,33 @@ cmd_apt_min_install()  {
     echo ' \'
 }
 
-cmd_apt_purge_packages() {
-    local packages="$*"
+cmd_apt_purge_packages_function() {
+    [ -z "$_cmd_apt_purge_packages_function_printed" ] || return 0
+    [ -n "$DEV_MODE" ] || _cmd_apt_purge_packages_function_printed=1
 
+    cat <<'EOS'
+    ; function apt_purge_packages() { \
+        local pkgToRemoveList="" \
+    ;   for pkgToRemove in "$@"; do \
+          if dpkg --status "$pkgToRemove" &> /dev/null; then \
+            pkgToRemoveList="$pkgToRemoveList $pkgToRemove" ; \
+          fi ; \
+        done  \
+    ;   if [ -n "$pkgToRemoveList" ]; then \
+          DEBIAN_FRONTEND=noninteractive apt-get purge -y -o Dpkg::Options::=--force-unsafe-io \
+            $pkgToRemoveList \
+        ; fi \
+    ; } \
+EOS
+}
+
+cmd_apt_purge_packages() {
     enter_run_cmd
 
+    cmd_apt_purge_packages_function
+
     cat <<EOS
-    ; DEBIAN_FRONTEND=noninteractive apt-get purge -y -o Dpkg::Options::=--force-unsafe-io \\
-        $packages \\
+    ; apt_purge_packages $* \\
 EOS
 }
 
