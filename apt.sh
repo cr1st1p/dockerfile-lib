@@ -16,6 +16,16 @@ run_apt_update() {
 EOS
 }
 
+cmd_apt_install() {
+    enter_run_cmd
+
+    echo -n "$INDENT; "
+    echo 'DEBIAN_FRONTEND=noninteractive apt-get install  -yqq -o Dpkg::Options::=--force-unsafe-io \'
+    echo -n "${INDENT}${INDENT}$*"
+    echo ' \'
+}
+
+
 cmd_apt_min_install_impl() {
     #shellcheck disable=SC1003
     echo 'DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests -yqq -o Dpkg::Options::=--force-unsafe-io \'
